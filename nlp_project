@@ -1,1 +1,85 @@
 
+import pandas as pd
+import csv
+med_transcript = pd.read_csv("mtsamples.csv", index_col=0,on_bad_lines='skip')
+med_transcript.info()
+med_transcript.head()
+
+med_transcript.dropna(subset=['transcription'], inplace=True)
+med_transcript_small = med_transcript.sample(n=100, replace=False, random_state=42)
+med_transcript_small.info()
+med_transcript_small.head()
+
+sample_transcription = med_transcript_small['transcription'].iloc[0]
+print(sample_transcription[:1000])
+
+import scispacy
+import spacy
+nlp = spacy.load("en_ner_bc5cdr_md")
+
+doc = nlp(sample_transcription)
+print("TEXT", "START", "END", "ENTITY TYPE")
+for ent in doc.ents:
+    print(ent.text, ent.start_char, ent.end_char, ent.label_)
+
+import re
+
+med_transcript_small['transcription'] = med_transcript_small['transcription'].apply(lambda x: re.sub('(\.,)', ". ", x))
+
+from spacy import displacy
+displacy.render(doc[:100], style='ent', jupyter=True) # here I am printing just the first 100 tokens
+
+from spacy.matcher import Matcher
+
+pattern = [{'ENT_TYPE':'CHEMICAL'}, {'LIKE_NUM': True}, {'IS_ASCII': True}]
+matcher = Matcher(nlp.vocab)
+matcher.add("DRUG_DOSE", [pattern])
+
+for transcription in med_transcript_small['transcription']:
+    doc = nlp(transcription)
+    matches = matcher(doc)
+    for match_id, start, end in matches:
+        string_id = nlp.vocab.strings[match_id]  # get string representation
+        span = doc[start:end]  # the matched span
+        print(string_id, start, end, span.text)
+
+
+
+med_transcript.dropna(subset=['transcription'], inplace=True)
+med_transcript_small = med_transcript.sample(n=100, replace=False, random_state=42)
+med_transcript_small.info()
+med_transcript_small.head()
+
+sample_transcription = med_transcript_small['transcription'].iloc[0]
+print(sample_transcription[:1000])
+
+import scispacy
+import spacy
+nlp = spacy.load("en_ner_bionlp13cg_md")
+
+doc = nlp(sample_transcription)
+print("TEXT", "START", "END", "ENTITY TYPE")
+for ent in doc.ents:
+    print(ent.text, ent.start_char, ent.end_char, ent.label_)
+
+import re
+
+med_transcript_small['transcription'] = med_transcript_small['transcription'].apply(lambda x: re.sub('(\.,)', ". ", x))
+
+from spacy import displacy
+displacy.render(doc[:100], style='ent', jupyter=True) # here I am printing just the first 100 tokens
+
+from spacy.matcher import Matcher
+
+pattern = [{'ENT_TYPE':'TISSUE'}]# {'LIKE_NUM': True}, {'IS_ASCII': True}]
+matcher = Matcher(nlp.vocab)
+matcher.add("Cancer", [pattern])
+
+for transcription in med_transcript_small['transcription']:
+    doc = nlp(transcription)
+    matches = matcher(doc)
+    #print(matches)
+    for match_id, start, end in matches:
+        string_id = nlp.vocab.strings[match_id]  # get string representation
+        span = doc[start:end]  # the matched span
+        print(string_id, start, end, span.text)
