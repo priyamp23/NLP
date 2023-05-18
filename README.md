@@ -1,7 +1,8 @@
 # NLP
-Anatomical body parts name Extraction
-Read the dataset mtsamples.csv 
-To execute the file -
+#Anatomical body parts name Extraction
+
+###Read the dataset mtsamples.csv 
+
 
 Install following requirements :
   !pip install scispacy
@@ -13,5 +14,6 @@ Install following requirements :
   pip install https://s3-us-west-2.amazonaws.com/ai2-s2-scispacy/releases/v0.5.1/en_ner_bionlp13cg_md-0.5.1.tar.gz
   
   
+To execute the file :
 
 python nlp_proj.py
