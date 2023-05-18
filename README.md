@@ -1,7 +1,6 @@
-# NLP
 #Anatomical body parts name Extraction
 
-###Read the dataset mtsamples.csv 
+**Read the dataset mtsamples.csv**
 
 
 Install following requirements :
